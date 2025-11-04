@@ -1,73 +1,105 @@
-# Getting Started with Create React App
+# Faucet dApp UI — `src/App.js` Documentation
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This document describes the application logic implemented in `src/App.js`. It covers state, effects, user actions, and UI behavior for the faucet dApp UI that interacts with an Ethereum smart contract.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+`App` is a React component that:
 
-### `npm start`
+- Detects an Ethereum provider (MetaMask) and initializes Web3.
+- Loads the deployed `Faucet` contract artifact and instance.
+- Tracks the connected account and the contract’s ETH balance.
+- Exposes two actions: donate 1 ETH and withdraw 0.1 ETH.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### External Dependencies
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- `web3`: Ethereum RPC client used to query balances and send transactions.
+- `@metamask/detect-provider`: Detects an injected EIP-1193 provider (MetaMask).
+- `./utils/load-contract`: Fetches `public/contracts/Faucet.json` and returns the deployed Truffle contract instance.
 
-### `npm test`
+## Component State
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- `web3Api`: `{ provider, isProviderLoaded, web3, contract }`
+  - `provider`: EIP-1193 provider (e.g., `window.ethereum`).
+  - `isProviderLoaded`: `true` once provider detection completes (found or not).
+  - `web3`: Initialized `Web3` instance.
+  - `contract`: Deployed `Faucet` contract instance.
+- `balance`: Current ETH balance of the `Faucet` contract (string in ETH).
+- `account`: Currently selected wallet address.
+- `shouldReload`: Boolean toggle to trigger reactive balance reloads.
 
-### `npm run build`
+### Derived Values
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- `canConnectToContract`: Truthy when both `account` and `web3Api.contract` are available; controls button enabled states.
+- `reloadEffect`: A memoized callback that toggles `shouldReload` to refresh the balance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Lifecycle Effects
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1) Provider/Contract initialization (runs once on mount)
 
-### `npm run eject`
+- Detects provider via `detectEthereumProvider()`.
+- If found: loads `Faucet` via `loadContract("Faucet", provider)`, sets provider listeners, and initializes Web3.
+- If not found: marks provider as loaded and logs a hint to install MetaMask.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+2) Balance loader (runs when `web3Api` or `shouldReload` changes)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- When `contract` is set, queries `web3.eth.getBalance(contract.address)`.
+- Converts balance from wei to ETH (`web3.utils.fromWei`) and stores it in `balance`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+3) Account resolver (runs when `web3Api.web3` changes)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- Retrieves accounts via `web3.eth.getAccounts()` and stores the first as `account`.
 
-## Learn More
+## Provider Event Listeners
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- `accountsChanged`: Triggers a full page reload to reflect the new account.
+- `chainChanged`: Triggers a full page reload to reflect the new network.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## User Actions
 
-### Code Splitting
+- `addFunds` (async): Sends exactly 1 ETH to the faucet contract.
+  - Transaction: `contract.addFunds({ from: account, value: toWei("1", "ether") })`
+  - On success: toggles `reloadEffect()` to refresh displayed balance.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- `withdraw` (async): Withdraws exactly 0.1 ETH from the faucet contract.
+  - Transaction: `contract.withdraw(toWei("0.1", "ether"), { from: account })`
+  - On success: toggles `reloadEffect()` to refresh displayed balance.
 
-### Analyzing the Bundle Size
+## UI Behavior
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- If provider detection is pending: shows “Looking for Web3…”.
+- If no provider: shows an inline notice with a link to install MetaMask.
+- If provider present but no account: shows a "Connect Wallet" button which calls `provider.request({ method: "eth_requestAccounts" })`.
+- Displays the connected `account` when available.
+- Displays faucet `balance` in ETH.
+- Shows a hint to “Connect to Ganache” when a contract/account connection isn’t possible.
+- Disables action buttons when `canConnectToContract` is falsy.
 
-### Making a Progressive Web App
+## Error Handling & Edge Cases
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- Missing provider: UI surfaces guidance to install MetaMask; state marks provider as loaded to stop the spinner.
+- Wrong network: `loadContract` logs a descriptive error if `deployed()` lookup fails due to network mismatch.
+- Network/account changes: full reload ensures fresh state and connections.
 
-### Advanced Configuration
+## Extensibility Hints
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Change donation/withdrawal amounts: adjust values used in `addFunds`/`withdraw`.
+- Add notifications: wrap transactions with UI toasts and error surfaces.
+- Improve reload strategy: replace full page reloads with stateful re-initialization on provider events.
+- Support multiple networks: add explicit chain checks and messages before enabling actions.
 
-### Deployment
+## Minimal Flow (Pseudo-code)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```js
+const provider = await detectEthereumProvider();
+const web3 = new Web3(provider);
+const faucet = await loadContract("Faucet", provider);
+const [account] = await web3.eth.getAccounts();
+const balanceWei = await web3.eth.getBalance(faucet.address);
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+await faucet.addFunds({ from: account, value: web3.utils.toWei("1", "ether") });
+await faucet.withdraw(web3.utils.toWei("0.1", "ether"), { from: account });
+```
 
 ## dApp API & Usage
 
