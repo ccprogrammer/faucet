@@ -22,7 +22,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"addFunds\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"withdrawAmount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/IFaucet.sol\":\"IFaucet\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/IFaucet.sol\":{\"keccak256\":\"0xe878e7f090d1872d971ab872af640cb11a6af211e969bba5edb135f900c599eb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d8d545a49f31e9bd8469d0b47f5f993ef75c0c0623f28c937a4d3cb83710c15c\",\"dweb:/ipfs/QmSpPNiH5ToempnYoU5VAqtjH2nFKEoV9ChW8RHcGX2wWN\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"addFunds\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"withdrawAmount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"withdraw(uint256)\":{\"params\":{\"withdrawAmount\":\"The amount in wei to withdraw.\"}}},\"title\":\"Faucet interface\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"addFunds()\":{\"notice\":\"Deposit funds into the faucet.\"},\"withdraw(uint256)\":{\"notice\":\"Withdraw a specified amount from the faucet.\"}},\"notice\":\"Defines the public faucet interactions used by clients.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/IFaucet.sol\":\"IFaucet\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/IFaucet.sol\":{\"keccak256\":\"0xf5a0e4bf21905e728e02838512d9c93fc07449e97e7a93f5b237e074a480df6d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://daa4c6d17e3c7bbb943b126e5f30ba7143f1c19653a03a4bd893fa17ed1f80ac\",\"dweb:/ipfs/QmQ5hSZnm2igSy79N812UPptpQLEzfAzEWwwYfFSmck4gF\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -30,21 +30,21 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.4.22 <0.9.0;\n\n// they cannot inherit from other smart contracts\n// they can only inherit from other interfaces\n\n// They cannot declare a constructor\n// They cannot declare state variables\n// all declared functions have to be external\n\ninterface IFaucet {\n  function addFunds() external payable;\n  function withdraw(uint withdrawAmount) external;\n}\n",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.4.22 <0.9.0;\n\n// they cannot inherit from other smart contracts\n// they can only inherit from other interfaces\n\n// They cannot declare a constructor\n// They cannot declare state variables\n// all declared functions have to be external\n\n/// @title Faucet interface\n/// @notice Defines the public faucet interactions used by clients.\ninterface IFaucet {\n  /// @notice Deposit funds into the faucet.\n  function addFunds() external payable;\n  /// @notice Withdraw a specified amount from the faucet.\n  /// @param withdrawAmount The amount in wei to withdraw.\n  function withdraw(uint withdrawAmount) external;\n}\n",
   "sourcePath": "/Users/user/Keep Out/Development/Blockchain/blockchain/faucet-course-main/contracts/IFaucet.sol",
   "ast": {
     "absolutePath": "project:/contracts/IFaucet.sol",
     "exportedSymbols": {
       "IFaucet": [
-        177
+        190
       ]
     },
-    "id": 178,
+    "id": 191,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 168,
+        "id": 178,
         "literals": [
           "solidity",
           ">=",
@@ -62,64 +62,82 @@
         "baseContracts": [],
         "contractDependencies": [],
         "contractKind": "interface",
+        "documentation": {
+          "id": 179,
+          "nodeType": "StructuredDocumentation",
+          "src": "287:96:1",
+          "text": "@title Faucet interface\n @notice Defines the public faucet interactions used by clients."
+        },
         "fullyImplemented": false,
-        "id": 177,
+        "id": 190,
         "linearizedBaseContracts": [
-          177
+          190
         ],
         "name": "IFaucet",
-        "nameLocation": "297:7:1",
+        "nameLocation": "393:7:1",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
+            "documentation": {
+              "id": 180,
+              "nodeType": "StructuredDocumentation",
+              "src": "405:42:1",
+              "text": "@notice Deposit funds into the faucet."
+            },
             "functionSelector": "a26759cb",
-            "id": 171,
+            "id": 183,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "addFunds",
-            "nameLocation": "318:8:1",
+            "nameLocation": "459:8:1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 169,
+              "id": 181,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "326:2:1"
+              "src": "467:2:1"
             },
             "returnParameters": {
-              "id": 170,
+              "id": 182,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "345:0:1"
+              "src": "486:0:1"
             },
-            "scope": 177,
-            "src": "309:37:1",
+            "scope": 190,
+            "src": "450:37:1",
             "stateMutability": "payable",
             "virtual": false,
             "visibility": "external"
           },
           {
+            "documentation": {
+              "id": 184,
+              "nodeType": "StructuredDocumentation",
+              "src": "490:115:1",
+              "text": "@notice Withdraw a specified amount from the faucet.\n @param withdrawAmount The amount in wei to withdraw."
+            },
             "functionSelector": "2e1a7d4d",
-            "id": 176,
+            "id": 189,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "withdraw",
-            "nameLocation": "358:8:1",
+            "nameLocation": "617:8:1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 174,
+              "id": 187,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 173,
+                  "id": 186,
                   "mutability": "mutable",
                   "name": "withdrawAmount",
-                  "nameLocation": "372:14:1",
+                  "nameLocation": "631:14:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 176,
-                  "src": "367:19:1",
+                  "scope": 189,
+                  "src": "626:19:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -127,10 +145,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 172,
+                    "id": 185,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "367:4:1",
+                    "src": "626:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -139,27 +157,27 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "366:21:1"
+              "src": "625:21:1"
             },
             "returnParameters": {
-              "id": 175,
+              "id": 188,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "396:0:1"
+              "src": "655:0:1"
             },
-            "scope": 177,
-            "src": "349:48:1",
+            "scope": 190,
+            "src": "608:48:1",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 178,
-        "src": "287:112:1",
+        "scope": 191,
+        "src": "383:275:1",
         "usedErrors": []
       }
     ],
-    "src": "32:368:1"
+    "src": "32:627:1"
   },
   "compiler": {
     "name": "solc",
@@ -167,15 +185,30 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-10-28T09:49:17.517Z",
+  "updatedAt": "2025-11-05T03:52:15.929Z",
   "devdoc": {
     "kind": "dev",
-    "methods": {},
+    "methods": {
+      "withdraw(uint256)": {
+        "params": {
+          "withdrawAmount": "The amount in wei to withdraw."
+        }
+      }
+    },
+    "title": "Faucet interface",
     "version": 1
   },
   "userdoc": {
     "kind": "user",
-    "methods": {},
+    "methods": {
+      "addFunds()": {
+        "notice": "Deposit funds into the faucet."
+      },
+      "withdraw(uint256)": {
+        "notice": "Withdraw a specified amount from the faucet."
+      }
+    },
+    "notice": "Defines the public faucet interactions used by clients.",
     "version": 1
   }
 }
